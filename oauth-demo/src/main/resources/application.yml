@@ -1,0 +1,9 @@
+awesomeapp:
+  oauth:
+    client-id: x
+    client-secret: x
+    auth-url: https://accounts.google.com/o/oauth2/auth
+    token-url: https://oauth2.googleapis.com/token
+    redirect-url: http://localhost:8080/ok
+    scopes: openid profile
+
