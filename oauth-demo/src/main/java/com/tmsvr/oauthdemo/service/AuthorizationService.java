@@ -20,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 @Service
 @AllArgsConstructor
 public class AuthorizationService {
+
     private final OAuthConfig oAuthConfig;
     private final TokenRepository tokenRepository;
 
@@ -44,30 +45,50 @@ public class AuthorizationService {
     }
 
     private Token exchangeCodeForTokens(String code) {
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("grant_type", "authorization_code");
+        parameters.add("client_id", oAuthConfig.clientId());
+        parameters.add("client_secret", oAuthConfig.clientSecret());
+        parameters.add("redirect_uri", oAuthConfig.redirectUrl());
+        parameters.add("code", code);
+
+        TokenResponse response = callTokenEndpoint(parameters);
+
+        return createToken(response, 1L);
+    }
+
+    public Token refreshToken(Token token) {
+        MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
+        parameters.add("grant_type", "refresh_token");
+        parameters.add("client_id", oAuthConfig.clientId());
+        parameters.add("client_secret", oAuthConfig.clientSecret());
+        parameters.add("refresh_token", token.refreshToken());
+
+        TokenResponse response = callTokenEndpoint(parameters);
+
+        return createToken(response, token.userid());
+    }
+
+    private Token createToken(TokenResponse response, long userid) {
+        return new Token(response.getAccessToken(),
+                Instant.now().plusSeconds(response.getExpiresIn()),
+                response.getRefreshToken(),
+                Instant.now().plus(30, ChronoUnit.DAYS), // this is usually documented by the auth provider
+                Instant.now(),
+                userid
+        );
+    }
+
+    private TokenResponse callTokenEndpoint(MultiValueMap<String, String> parameters) {
         String tokenUrl = oAuthConfig.tokenUrl();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
-        MultiValueMap<String, String> map = new LinkedMultiValueMap<>();
-        map.add("grant_type", "authorization_code");
-        map.add("client_id", oAuthConfig.clientId());
-        map.add("client_secret", oAuthConfig.clientSecret());
-        map.add("redirect_uri", oAuthConfig.redirectUrl());
-        map.add("code", code);
-
-        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(map, headers);
+        HttpEntity<MultiValueMap<String, String>> request = new HttpEntity<>(parameters, headers);
 
         RestTemplate restTemplate = new RestTemplate();
-        TokenResponse response = restTemplate.postForEntity(tokenUrl, request, TokenResponse.class).getBody();
-
-        return new Token(response.getAccessToken(),
-                Instant.now().plusSeconds(response.getExpiresIn()),
-                response.getRefreshToken(),
-                Instant.now().plus(30, ChronoUnit.DAYS),
-                Instant.now(),
-                1L
-        );
+        return restTemplate.postForEntity(tokenUrl, request, TokenResponse.class).getBody();
     }
 
     private String generateState() {

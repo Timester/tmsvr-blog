@@ -4,6 +4,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Component
 public class InMemoryTokenRepository implements TokenRepository {
@@ -17,5 +18,10 @@ public class InMemoryTokenRepository implements TokenRepository {
     @Override
     public Token save(Token token) {
         return this.tokenStore.put(token.userid(), token);
+    }
+
+    @Override
+    public Optional<Token> findByUserId(long userId) {
+        return Optional.ofNullable(tokenStore.get(userId));
     }
 }
