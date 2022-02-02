@@ -1,0 +1,11 @@
+html, body {
+  height: 100%;
+}
+
+#root, .mapContainer {
+  height: 90%;
+}
+
+.leaflet-container {
+  height: 100%;
+}
