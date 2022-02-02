@@ -16,9 +16,7 @@ export function InfoBox({ data, scope }) {
       <br></br>
       <b>{scope.name}:</b> {numberWithCommas(data[scope.key])} {scope.unit}
       <br></br>
-      <b>Description:</b> {scope.description}
-      <br></br>
-      <a href={data[scope.key].source}>source</a></div>;
+      <b>Description:</b> {scope.description}</div>;
   } else {
     infoBox = <h4><i>select a country</i></h4>;
   }
