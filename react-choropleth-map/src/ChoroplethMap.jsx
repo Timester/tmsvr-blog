@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 import { InfoBox } from './InfoBox';
 import { DataScopeSelector } from './DataScopeSelector';
@@ -43,65 +43,36 @@ const colors = [
     '#f6081b'
 ]
 
-export default class ChoroplethMap extends React.Component {
-    constructor(props) {
-        super(props);
+export default function ChoroplethMap() {
 
-        this.defaultStyle = {
-            weight: 2,
-            opacity: 1,
-            color: 'white',
-            dashArray: '3',
-            fillOpacity: 0.7
-        }
+    const [dataScope, setDataScope] = useState(dataScopes[0]);
+    const [selectedCountry, setSelectedCountry] = useState(null);
+    const [hoveredCountry, setHoveredCountry] = useState(null);
 
-        this.highlightedStyle = {
-            weight: 3,
-            color: '#666',
-            dashArray: '',
-            fillOpacity: 0.7
-        }
-
-        this.state = {
-            dataScope: dataScopes[0],
-            data: null
-        }
-
-        this.getColor = this.getColor.bind(this);
-        this.style = this.style.bind(this);
-        this.onEachFeature = this.onEachFeature.bind(this);
-        this.highlightFeature = this.highlightFeature.bind(this);
-        this.resetHighlight = this.resetHighlight.bind(this);
-        this.handleDataScopeChange = this.handleDataScopeChange.bind(this);
+    const handleDataScopeChange = (event) => {
+        setDataScope(dataScopes.find(element => element.key === event.target.value));
     }
 
-    handleDataScopeChange(event) {
-        // TODO dataScope changes as it should, but the map coloring wont change, must update the style
-        this.setState({ dataScope: dataScopes.find(element => element.key === event.target.value) })
+    const highlightFeature = (e) => {
+        let layer = e.target;
+        setHoveredCountry(layer.feature.properties);
     }
 
-    highlightFeature(e) {
-        var layer = e.target;
-        layer.bringToFront();
-        layer.setStyle(this.highlightedStyle);
+    const resetHighlight = (e) => {
+        setHoveredCountry(null);
     }
 
-    resetHighlight(e) {
-        var layer = e.target;
-        layer.setStyle(this.defaultStyle);
-    }
-
-    onEachFeature(feature, layer) {
+    const onEachFeature = (feature, layer) => {
         layer.on({
-            mouseover: this.highlightFeature,
-            mouseout: this.resetHighlight,
-            click: () => this.setState({ data: feature.properties })
+            mouseover: highlightFeature,
+            mouseout: resetHighlight,
+            click: () => setSelectedCountry(feature.properties)
         });
     }
 
-    getColor(val) {
-        for (let i = 1; i < this.state.dataScope.scale.length; i++) {
-            if (val < this.state.dataScope.scale[i]) {
+    const getColor = (val) => {
+        for (let i = 1; i < dataScope.scale.length; i++) {
+            if (val < dataScope.scale[i]) {
                 return colors[i - 1];
             }
         }
@@ -109,27 +80,32 @@ export default class ChoroplethMap extends React.Component {
         return colors[colors.length - 1];
     }
 
-    style(feature) {
-        return {
-            fillColor: this.getColor(feature.properties[this.state.dataScope.key]),
-            weight: 2,
+    const style = (feature) => {
+        let mapStyle = {
+            fillColor: getColor(feature.properties[dataScope.key]),
+            weight: 1,
             opacity: 1,
-            color: 'white',
+            color: '#888',
             dashArray: '3',
             fillOpacity: 0.7
         };
+
+        if (hoveredCountry && feature.properties.iso_a3 === hoveredCountry.iso_a3) {
+            mapStyle.color = '#444';
+            mapStyle.weight = 2;
+        }
+
+        return mapStyle;
     }
 
-    render() {
-        return (
-            <div className='mapContainer'>
-                <MapContainer center={[51.505, -0.09]} zoom={3}>
-                    <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
-                    <GeoJSON data={countries} style={this.style} onEachFeature={this.onEachFeature} />
-                    <InfoBox data={this.state.data} scope={this.state.dataScope} />
-                </MapContainer>
-                <DataScopeSelector options={dataScopes} value={this.state.dataScope} changeHandler={this.handleDataScopeChange} />
-            </div>
-        );
-    }
+    return (
+        <div className='mapContainer' >
+            <MapContainer center={[51.505, -0.09]} zoom={3}>
+                <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+                <GeoJSON data={countries} style={style} onEachFeature={onEachFeature} />
+                <InfoBox data={selectedCountry} scope={dataScope} />
+            </MapContainer>
+            <DataScopeSelector options={dataScopes} value={dataScope} changeHandler={handleDataScopeChange} />
+        </div>
+    );
 }
