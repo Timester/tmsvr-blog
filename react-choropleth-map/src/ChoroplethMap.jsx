@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
+import L from 'leaflet';
 import { InfoBox } from './InfoBox';
 import { DataScopeSelector } from './DataScopeSelector';
 
@@ -91,7 +92,16 @@ export default function ChoroplethMap() {
 
     return (
         <div className='mapContainer' >
-            <MapContainer center={[51.505, -0.09]} zoom={3}>
+            <MapContainer center={[40, 0]}
+                    zoomControl={false}
+                    zoom={2.5}
+                    maxZoom={8}
+                    minZoom={2}
+                    zoomSnap={0.5}
+                    zoomDelta={0.5}
+                    wheelPxPerZoomLevel={120}
+                    maxBoundsViscosity={0.5}
+                    maxBounds={L.latLngBounds(new L.LatLng(85, -210), new L.LatLng(-85, 210))}>
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 <GeoJSON data={countries} style={style} onEachFeature={onEachFeature} />
                 <InfoBox data={selectedCountry} scope={dataScope} />
