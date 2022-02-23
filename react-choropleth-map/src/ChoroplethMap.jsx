@@ -2,7 +2,9 @@ import React, { useState, useRef, useMemo, useCallback } from 'react';
 import { MapContainer, TileLayer, GeoJSON } from 'react-leaflet'
 import L from 'leaflet';
 import { InfoBox } from './InfoBox';
+import { Legend } from './Legend';
 import { DataScopeSelector } from './DataScopeSelector';
+import { getColor } from './util';
 
 import './index.css';
 
@@ -21,12 +23,12 @@ const dataScopes = [
         key: "gdp_md_est",
         description: "The GDP of the country",
         unit: "USD",
-        scale: [100000, 250000, 500000, 5000000, 15000000]
+        scale: [100000, 250000, 500000, 1000000, 2500000, 5000000, 15000000]
     }
 ];
 
 const colors = [
-    ['#ffffcc', '#c7e9b4', '#7fcdbb', '#41b6c4', '#2c7fb8', '#253494'],
+    ['#fcfca7', '#f4e283', '#eec762', '#e8ab44', '#e28d2b', '#dc6e16', '#d4490a', '#cb0c0c'],
     ['#ffffd9', '#edf8b1', '#c7e9b4', '#7fcdbb', '#41b6c4', '#1d91c0', '#225ea8', '#253494', '#081d58']
 ]
 
@@ -75,25 +77,9 @@ export default function ChoroplethMap() {
         }
     }, [dataScope])
 
-    const getColor = (val, scale) => {
-        if (!val) {
-            return '#ddd';
-        }
-
-        let colorsToUse = colors[scale.length === 5 ? 0 : 1];
-
-        for (let i = 0; i < scale.length; i++) {
-            if (val < scale[i]) {
-                return colorsToUse[i];
-            }
-        }
-
-        return colorsToUse[colorsToUse.length - 1];
-    }
-
     const style = useCallback((feature) => {
         let mapStyle = {
-            fillColor: getColor(feature.properties[dataScope.key], dataScope.scale),
+            fillColor: getColor(feature.properties[dataScope.key], colors, dataScope.scale),
             weight: 1,
             opacity: 1,
             color: '#888',
@@ -102,7 +88,7 @@ export default function ChoroplethMap() {
         };
 
         return mapStyle;
-    },[dataScope]);
+    }, [dataScope]);
 
     const geoJsonComponent = useMemo(
         () => <GeoJSON data={countries} style={style} onEachFeature={onEachFeature} ref={geoMap} />,
@@ -124,6 +110,7 @@ export default function ChoroplethMap() {
                 <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
                 {geoJsonComponent}
                 <InfoBox data={selectedCountry} scope={dataScope} />
+                <Legend scope={dataScope} colors={colors} hoveredCountry={hoveredCountry} />
             </MapContainer>
             <DataScopeSelector options={dataScopes} value={dataScope} changeHandler={handleDataScopeChange} />
         </div>
