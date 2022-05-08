@@ -1,37 +1,27 @@
-## Welcome to GitHub Pages
+# TMSVR Blog code examples
 
-You can use the [editor on GitHub](https://github.com/Timester/tmsvr-blog/edit/master/docs/index.md) to maintain and preview the content for your website in Markdown files.
+This page is about the code examples created for my blog [TMSVR.com](https://tmsvr.com).
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+## React leaflet interactive map examples
 
-### Markdown
+One topic is the Interactive leaflet map that I have created in React to learn these new technologies. This experimenting later turned into a side-project called [AtlasNinja](https://atlasninja.com). There are 2 articles on my blog about the technical aspects of creating an interactive amp in React using Leaflet:
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+- [Making an interactive map with React and Leaflet](https://tmsvr.com/making-an-interactive-map-with-react-and-leaflet/)
+- [React interactive choropleth map - Part 2](https://tmsvr.com/react-leaflet-map-performance-issues/)
 
-```markdown
-Syntax highlighted code block
+There are code examples for these articles in my git repo here: https://github.com/Timester/tmsvr-blog/tree/master/react-choropleth-map 
 
-# Header 1
-## Header 2
-### Header 3
+And a third one is about the AtlasNinja project, whic is a website providing factual information about countries ina  modern clean design.
 
-- Bulleted
-- List
+- [Introducing a new app, AtlasNinja](https://tmsvr.com/introducing-a-new-app-atlasninja/)
+- [AtlasNinja](https://atlasninja.com)
 
-1. Numbered
-2. List
+## Spring Boot OAuth handling
 
-**Bold** and _Italic_ and `Code` text
+The first topic I have covered was the OAuth protocol and implementing OAuth based functions in Spring Boot with Java. 
 
-[Link](url) and ![Image](src)
-```
+- [OAuth 2.0 - A practical intro](https://tmsvr.com/oauth-2-practical-intro/)
+- [OAuth 2.0 - Implementing a client](https://tmsvr.com/oauth-2-client-implementation/)
+- [OAuth 2.0 - Token management](https://tmsvr.com/oauth-2-0-token-management/)
 
-For more details see [Basic writing and formatting syntax](https://docs.github.com/en/github/writing-on-github/getting-started-with-writing-and-formatting-on-github/basic-writing-and-formatting-syntax).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/Timester/tmsvr-blog/settings/pages). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://docs.github.com/categories/github-pages-basics/) or [contact support](https://support.github.com/contact) and we’ll help you sort it out.
+The code examples for these articles can be found here: https://github.com/Timester/tmsvr-blog/tree/master/oauth-demo
