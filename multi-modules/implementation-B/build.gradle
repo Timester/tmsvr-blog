@@ -1,0 +1,7 @@
+plugins {
+    id 'multimodule-config'
+}
+
+dependencies {
+    implementation project(":interface")
+}
