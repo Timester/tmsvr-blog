@@ -1,5 +1,6 @@
 plugins {
     id 'multimodule-config'
+    id 'spring-conventions'
 }
 
 dependencies {
