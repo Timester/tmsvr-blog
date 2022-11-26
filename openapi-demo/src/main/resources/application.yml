@@ -1,0 +1,7 @@
+logging:
+  level:
+    feign.Logger: trace
+    reactor:
+      netty: trace
+      ipc:
+        netty: debug

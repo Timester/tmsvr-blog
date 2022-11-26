@@ -1,0 +1,37 @@
+openapi: 3.0.0
+servers:
+  - description: UUID Generator API
+    url: https://www.uuidtools.com/api/generate
+info:
+  title: UUID Generator API
+  version: "2.13.4"
+  description: "These endpoints are specific to Xero Files API"
+tags:
+  - name: Uuid
+paths:
+  /v4/count/{count}:
+    get:
+      operationId: generateUuid
+      summary: Generate type 4 UUID
+      tags:
+        - Uuid
+      parameters:
+        - name: count
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int32
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UuidResponse'
+components:
+  schemas:
+    UuidResponse:
+      type: array
+      items:
+        type: string
